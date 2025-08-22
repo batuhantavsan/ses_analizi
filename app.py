@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq
 import os
-from streamlit_audio_recorder import audio_recorder
+from audiorecorder import audiorecorder
 import io
 
 # --- Sayfa Yapılandırması ---
@@ -134,7 +134,7 @@ with tab_analiz:
     # Sütun 1: Ses Kaydı Yapma
     with col1:
         st.subheader("1. Seçenek: Ses Kaydı Oluşturun")
-        audio = audio_recorder("Kaydı Başlat", "Kaydı Durdur")
+        audio = audiorecorder("Kaydı Başlat", "Kaydı Durdur")
 
         if len(audio) > 0:
             st.audio(audio.export().read())
