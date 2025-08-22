@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq
 import os
-from streamlitaudiorecorder import audiorecorder
+from streamlit_audio_recorder import audiorecorder
 import io
 
 # --- Sayfa Yapılandırması ---
