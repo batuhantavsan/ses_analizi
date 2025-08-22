@@ -1,5 +1,4 @@
 streamlit
 groq
-streamlit-audiorecorder
-
+st-audiorecorder
 
