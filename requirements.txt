@@ -1,7 +1,5 @@
 streamlit
 groq
-streamlit-audiorecorder
 audiorecorder
-st_audiorec
 os
 io
