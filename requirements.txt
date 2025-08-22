@@ -1,2 +1,5 @@
 streamlit
 groq
+os
+io
+audiorecorder
