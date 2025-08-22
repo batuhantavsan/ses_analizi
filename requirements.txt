@@ -1,4 +1,4 @@
 streamlit
 groq
-audiorecorder
-pyaudio
+audio-recorder-streamlit
+
