@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq
 import os
-from streamlit_audio_recorder import audio_recorder
+from audiorecorder import audiorecorder
 import io
 
 # --- Sayfa Yapılandırması ---
@@ -12,10 +12,11 @@ st.set_page_config(
 )
 
 # =============================================================================
-# ANA BAŞLIK
+# ANA BAŞLIK ()
 # =============================================================================
 st.title("🎙️ Ses Analizi ve Diyalog Ayrıştırma")
 st.markdown("Aşağıdaki seçeneklerden birini kullanarak ses analizi yapabilirsiniz: Mikrofonunuzdan yeni bir ses kaydı oluşturun veya bilgisayarınızdan mevcut bir ses dosyasını yükleyin.")
+
 
 # =============================================================================
 # KENAR ÇUBUĞU (SIDEBAR)
@@ -50,13 +51,19 @@ with st.sidebar:
             help="Diyalog ayrıştırma gibi görevler için 0.1-0.3 arası düşük değerler önerilir."
         )
 
-    # --- ALT BİLGİ ---
+    # --- ALT BİLGİ (CSS ile en dibe sabitlenecek) ---
+    # Bu özel div, CSS'in alt bilgiyi hedeflemesini sağlar.
     st.markdown('<div class="sidebar-footer"></div>', unsafe_allow_html=True) 
-    with st.container():
+    with st.container(): # st.info'nun tam genişlikte olmasını sağlar
          st.info("Bu uygulama **BT** tarafından geliştirilmiştir.", icon="👨‍💻")
+
+
+
+
 
 # =============================================================================
 # YENİDEN KULLANILABİLİR ANALİZ FONKSİYONU
+# Kod tekrarını önlemek için tüm analiz mantığını buraya taşıdık.
 # =============================================================================
 def analyze_audio(client, audio_bytes, filename, model, temp):
     """
@@ -114,6 +121,7 @@ def analyze_audio(client, audio_bytes, filename, model, temp):
     except Exception as e:
         st.error(f"Beklenmedik bir hata oluştu: {e}", icon="❗")
 
+
 # =============================================================================
 # SEKMELİ YAPI
 # =============================================================================
@@ -126,12 +134,10 @@ with tab_analiz:
     # Sütun 1: Ses Kaydı Yapma
     with col1:
         st.subheader("1. Seçenek: Ses Kaydı Oluşturun")
-        
-        # Değiştirin: audio_recorder kullanımı
-        audio = audio_recorder()
+        audio = audiorecorder("Kaydı Başlat", "Kaydı Durdur")
 
-        if audio is not None:
-            st.audio(audio)
+        if len(audio) > 0:
+            st.audio(audio.export().read())
             
             # Kaydedilen ses için analiz butonu
             if st.button("Kaydı Analiz Et", use_container_width=True, type="primary"):
@@ -139,8 +145,9 @@ with tab_analiz:
                     st.warning("Lütfen kenar çubuğuna Groq API anahtarınızı girin.")
                 else:
                     client = Groq(api_key=api_key)
-                    # Kaydedilen sesi analiz fonksiyonuna gönder
-                    analyze_audio(client, audio, "kaydedilen_ses.wav", selected_model, temperature)
+                    # Kaydedilen sesi byte'a çevirip analiz fonksiyonuna gönder
+                    audio_bytes = audio.export(format="wav").read()
+                    analyze_audio(client, audio_bytes, "kaydedilen_ses.wav", selected_model, temperature)
 
     # Sütun 2: Dosya Yükleme
     with col2:
@@ -162,6 +169,7 @@ with tab_analiz:
                     client = Groq(api_key=api_key)
                     # Yüklenen dosyanın byte'larını analiz fonksiyonuna gönder
                     analyze_audio(client, uploaded_file.getvalue(), uploaded_file.name, selected_model, temperature)
+
 
 # --- HAKKINDA SEKMESİ ---
 with tab_hakkinda:
